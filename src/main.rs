@@ -9,7 +9,7 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "Word Document Diff Viewer",
         options,
-        Box::new(|_cc| Ok(Box::new(MyApp::default()))),
+        Box::new(|_cc| Box::new(MyApp::default())),
     )
 }
 
@@ -132,9 +132,6 @@ impl eframe::App for MyApp {
 
 impl MyApp {
     fn update_diff(&mut self) {
-        let left_lines: Vec<&str> = self.doc1_text.lines().collect();
-        let right_lines: Vec<&str> = self.doc2_text.lines().collect();
-
         let diff = TextDiff::from_lines(&self.doc1_text, &self.doc2_text);
         
         self.diff_lines.clear();
@@ -255,7 +252,6 @@ fn extract_text_from_docx(path: &PathBuf) -> Result<String, Box<dyn std::error::
 
 fn extract_text_from_xml(xml: &str) -> String {
     let mut text = String::new();
-    let mut in_text_element = false;
     let mut current_text = String::new();
 
     // Simple XML parsing for <w:t> tags
